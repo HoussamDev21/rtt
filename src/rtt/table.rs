@@ -87,6 +87,7 @@ impl Table {
             self.move_to_next_line();
             self.render_horizontal_line();
         }
+        self.move_to_next_line();
         self.render_end();
     }
 }

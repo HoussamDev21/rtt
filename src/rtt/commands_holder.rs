@@ -20,7 +20,7 @@ impl CommandsHolder {
 
     pub fn exec_all(&self) {
         for command in &self.commands {
-            match command.as_ref()() {
+            match command() {
                 Ok(_) => {}
                 Err(e) => println!("Error executing command: {}", e),
             }
