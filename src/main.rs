@@ -1,5 +1,4 @@
 mod rtt;
-
 use rtt::{Cell, Table};
 
 pub fn main() {

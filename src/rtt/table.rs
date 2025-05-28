@@ -1,6 +1,5 @@
+use crate::rtt::{Cell, CommandsHolder};
 use crate::{terminal_clear, terminal_move_to, terminal_print};
-
-use super::{Cell, commands_holder::CommandsHolder};
 
 #[derive(Debug)]
 pub struct Table {

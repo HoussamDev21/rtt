@@ -1,9 +1,10 @@
 #[macro_use]
-pub mod macros;
+mod macros;
 
-pub mod cell;
+mod cell;
 mod commands_holder;
-pub mod table;
+mod table;
 
 pub use cell::Cell;
+use commands_holder::CommandsHolder;
 pub use table::Table;
