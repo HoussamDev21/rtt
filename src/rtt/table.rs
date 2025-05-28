@@ -3,7 +3,6 @@ use crate::{terminal_clear, terminal_move_to, terminal_print};
 
 #[derive(Debug)]
 pub struct Table {
-    pub header: Vec<Cell>,
     pub rows: Vec<Vec<Cell>>,
     y: u16,
     commands: CommandsHolder,
@@ -12,17 +11,10 @@ pub struct Table {
 impl Table {
     pub fn new() -> Self {
         Self {
-            header: Vec::new(),
             rows: Vec::new(),
             y: 0,
             commands: CommandsHolder::new(),
         }
-    }
-
-    pub fn header(&mut self, header: Vec<Cell>) -> &mut Self {
-        self.header = header;
-
-        self
     }
 
     pub fn row(&mut self, row: Vec<Cell>) -> &mut Self {
@@ -59,11 +51,6 @@ impl Table {
         self.commands.push(move || terminal_move_to!(0, y));
     }
 
-    fn render_header(&mut self) {
-        let header = format!("| {} |", Self::join_cells(self.header.clone()));
-        self.commands.push(move || terminal_print!(header.clone()));
-    }
-
     fn render_row(&mut self, row: Vec<Cell>) {
         let row = format!("| {} |", Self::join_cells(row.clone()));
         self.commands.push(move || terminal_print!(row.clone()));
@@ -75,18 +62,14 @@ impl Table {
 
     pub fn render(&mut self) {
         self.render_start();
-        self.render_horizontal_line();
-        self.move_to_next_line();
-        self.render_header();
-        self.move_to_next_line();
-        self.render_horizontal_line();
         let rows = self.rows.clone();
         for row in rows {
+            self.render_horizontal_line();
             self.move_to_next_line();
             self.render_row(row);
             self.move_to_next_line();
-            self.render_horizontal_line();
         }
+        self.render_horizontal_line();
         self.move_to_next_line();
         self.render_end();
     }
