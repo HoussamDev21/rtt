@@ -30,6 +30,6 @@ impl CommandsHolder {
 
 impl fmt::Debug for CommandsHolder {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", "[CommandsHolder]")
+        write!(f, "{}", "[TODO: impl Debug]")
     }
 }
