@@ -114,7 +114,7 @@ impl Table {
         )
     }
 
-    fn formt_empty_row(&self, row: Vec<Cell>) -> String {
+    fn format_empty_row(&self, row: Vec<Cell>) -> String {
         let config = self.config.as_ref().cloned().unwrap_or_default();
 
         format!(
@@ -123,7 +123,7 @@ impl Table {
             self.join_cells(
                 row.clone()
                     .iter()
-                    .map(|cell| { cell.clone().value("") })
+                    .map(|cell| cell.clone().value(""))
                     .collect()
             ),
             config.v_line_char
@@ -131,20 +131,18 @@ impl Table {
     }
 
     fn render_row(&mut self, row: Vec<Cell>, height: u16) {
-        let row_formatted: String = self.format_row(row.clone());
-        self.commands
-            .push(move || terminal_print!(row_formatted.clone()));
-        match height.checked_sub(1) {
-            Some(h) => {
-                for i in 0..(height - 1) {
-                    self.move_to_next_line();
-                    let row_formatted = self.formt_empty_row(row.clone());
-                    self.commands
-                        .push(move || terminal_print!(row_formatted.clone()));
-                }
-            }
-            None => {}
-        };
+        let min_height = if height == 0 { 1 } else { height };
+        self.move_to_next_line();
+        for i in 0..min_height {
+            let row_formatted = if i == 0 {
+                self.format_row(row.clone())
+            } else {
+                self.format_empty_row(row.clone())
+            };
+            self.commands
+                .push(move || terminal_print!(row_formatted.clone()));
+            self.move_to_next_line();
+        }
     }
 
     fn render_end(&self) {
@@ -158,9 +156,7 @@ impl Table {
         let rows = self.rows.clone();
         for (index, row) in rows.into_iter().enumerate() {
             self.render_horizontal_line();
-            self.move_to_next_line();
             self.render_row(row, rows_h[index]);
-            self.move_to_next_line();
         }
         self.render_horizontal_line();
         self.move_to_next_line();

@@ -7,8 +7,8 @@ pub fn main() {
     let mut table = Table::new();
 
     table.set_config(TableConfig {
-        corners_char: ".",
-        h_line_char: "=",
+        corners_char: "+",
+        h_line_char: "-",
         v_line_char: "|",
     });
 
