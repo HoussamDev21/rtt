@@ -17,7 +17,7 @@ pub fn main() {
         w: Some(0),
         p: Some((0, 1, 0, 1)),
         h_align: Some(HAlign::Start),
-        ..Default::default()
+        ..Style::default()
     });
 
     table.row(vec![
