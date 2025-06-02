@@ -103,15 +103,48 @@ impl Table {
         self.commands.push(move || terminal_move_to!(0, y));
     }
 
-    fn render_row(&mut self, row: Vec<Cell>) {
+    fn format_row(&self, row: Vec<Cell>) -> String {
         let config = self.config.as_ref().cloned().unwrap_or_default();
-        let row = format!(
+
+        format!(
             "{}{}{}",
             config.v_line_char,
             self.join_cells(row.clone()),
             config.v_line_char
-        );
-        self.commands.push(move || terminal_print!(row.clone()));
+        )
+    }
+
+    fn formt_empty_row(&self, row: Vec<Cell>) -> String {
+        let config = self.config.as_ref().cloned().unwrap_or_default();
+
+        format!(
+            "{}{}{}",
+            config.v_line_char,
+            self.join_cells(
+                row.clone()
+                    .iter()
+                    .map(|cell| { cell.clone().value("") })
+                    .collect()
+            ),
+            config.v_line_char
+        )
+    }
+
+    fn render_row(&mut self, row: Vec<Cell>, height: u16) {
+        let row_formatted: String = self.format_row(row.clone());
+        self.commands
+            .push(move || terminal_print!(row_formatted.clone()));
+        match height.checked_sub(1) {
+            Some(h) => {
+                for i in 0..(height - 1) {
+                    self.move_to_next_line();
+                    let row_formatted = self.formt_empty_row(row.clone());
+                    self.commands
+                        .push(move || terminal_print!(row_formatted.clone()));
+                }
+            }
+            None => {}
+        };
     }
 
     fn render_end(&self) {
@@ -119,12 +152,14 @@ impl Table {
     }
 
     pub fn render(&mut self) {
+        let rows_h = self.rows_h();
+
         self.render_start();
         let rows = self.rows.clone();
-        for row in rows {
+        for (index, row) in rows.into_iter().enumerate() {
             self.render_horizontal_line();
             self.move_to_next_line();
-            self.render_row(row);
+            self.render_row(row, rows_h[index]);
             self.move_to_next_line();
         }
         self.render_horizontal_line();
@@ -159,6 +194,21 @@ impl Table {
         }
 
         cells_w
+    }
+
+    fn rows_h(&self) -> Vec<u16> {
+        let rows_h = self
+            .rows
+            .iter()
+            .map(|row| {
+                row.iter()
+                    .map(|cell| cell.clone().style.unwrap_or_default().h.unwrap_or_default())
+                    .max()
+                    .unwrap_or_default()
+            })
+            .collect();
+
+        rows_h
     }
 }
 

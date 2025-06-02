@@ -22,7 +22,10 @@ pub fn main() {
     });
 
     table.row(vec![
-        cell.value("name").width(30).h_align(HAlign::Center),
+        cell.value("name")
+            .width(30)
+            .height(2)
+            .h_align(HAlign::Center),
         cell.value("color").width(15).h_align(HAlign::Center),
         cell.value("price").width(15).h_align(HAlign::Center),
         cell.value("quantity").width(15).h_align(HAlign::Center),
