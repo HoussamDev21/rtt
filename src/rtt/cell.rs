@@ -20,31 +20,25 @@ impl Cell {
     }
 
     pub fn width(&mut self, w: u16) -> Self {
-        self.style = Some(Style {
-            w: Some(w),
-            ..Style::default()
-        });
+        let mut style = self.style.clone().unwrap_or_default();
+        style.w = Some(w);
+        self.style = Some(style);
 
         self.clone()
     }
 
     #[allow(dead_code)]
     pub fn height(&mut self, h: u16) -> Self {
-        self.style = Some(Style {
-            h: Some(h),
-            ..Style::default()
-        });
+        let mut style = self.style.clone().unwrap_or_default();
+        style.h = Some(h);
+        self.style = Some(style);
 
         self.clone()
     }
 
     #[allow(dead_code)]
     pub fn size(&mut self, w: u16, h: u16) -> Self {
-        self.style = Some(Style {
-            w: Some(w),
-            h: Some(h),
-            ..Style::default()
-        });
+        self.width(w).height(h);
 
         self.clone()
     }

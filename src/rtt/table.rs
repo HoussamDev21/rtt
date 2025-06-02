@@ -40,19 +40,25 @@ impl Table {
             .push(move || terminal_print!(format!("+{}+", line.join("+"))));
     }
 
-    fn join_cells(&self, values: Vec<Cell>) -> String {
+    fn formt_cell(&self, (index, cell): (usize, &Cell)) -> String {
         let cells_w = &self.cells_w();
+        let (_, pe, _, ps) = cell.style.clone().unwrap_or_default().p.unwrap_or_default();
+        format!(
+            "{:>ps$}{:>width$}{:>pe$}",
+            "",
+            cell.value.clone().unwrap_or_default(),
+            "",
+            width = (cells_w[index] - ps - pe) as usize,
+            ps = ps as usize,
+            pe = pe as usize
+        )
+    }
 
+    fn join_cells(&self, values: Vec<Cell>) -> String {
         values
             .iter()
             .enumerate()
-            .map(|(i, c)| {
-                format!(
-                    "{:<width$}",
-                    c.value.clone().unwrap_or_default(),
-                    width = cells_w[i] as usize
-                )
-            })
+            .map(|it| self.formt_cell(it))
             .collect::<Vec<String>>()
             .join("|")
     }
@@ -75,7 +81,6 @@ impl Table {
     pub fn render(&mut self) {
         self.render_start();
         let rows = self.rows.clone();
-        self.cells_w();
         for row in rows {
             self.render_horizontal_line();
             self.move_to_next_line();

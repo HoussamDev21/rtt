@@ -6,7 +6,8 @@ pub fn main() {
 
     let mut cell = Cell::default();
     cell.style(Style {
-        // w: Some(20),
+        w: Some(0),
+        p: Some((0, 1, 0, 1)),
         ..Default::default()
     });
 
