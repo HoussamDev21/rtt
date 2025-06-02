@@ -6,6 +6,7 @@ pub struct Table {
     pub rows: Vec<Vec<Cell>>,
     y: u16,
     commands: CommandsHolder,
+    config: Option<TableConfig>,
 }
 
 impl Table {
@@ -14,7 +15,12 @@ impl Table {
             rows: Vec::new(),
             y: 0,
             commands: CommandsHolder::new(),
+            config: Some(TableConfig::default()),
         }
+    }
+
+    pub fn set_config(&mut self, config: TableConfig) {
+        self.config = Some(config)
     }
 
     pub fn row(&mut self, row: Vec<Cell>) -> &mut Self {
@@ -30,14 +36,21 @@ impl Table {
 
     fn render_horizontal_line(&mut self) {
         let cells_w = &self.cells_w();
+        let config = self.config.as_ref().cloned().unwrap_or_default();
 
         let line: Vec<String> = cells_w
             .iter()
-            .map(|len| String::from("-".repeat(*len as usize)))
+            .map(|len| String::from(config.h_line_char.repeat(*len as usize)))
             .collect();
 
-        self.commands
-            .push(move || terminal_print!(format!("+{}+", line.join("+"))));
+        self.commands.push(move || {
+            terminal_print!(format!(
+                "{}{}{}",
+                config.corners_char,
+                line.join(config.corners_char),
+                config.corners_char,
+            ))
+        });
     }
 
     fn format_cell(&self, (index, cell): (usize, &Cell)) -> String {
@@ -74,12 +87,14 @@ impl Table {
     }
 
     fn join_cells(&self, values: Vec<Cell>) -> String {
+        let config = self.config.as_ref().cloned().unwrap_or_default();
+
         values
             .iter()
             .enumerate()
             .map(|it| self.format_cell(it))
             .collect::<Vec<String>>()
-            .join("|")
+            .join(config.v_line_char)
     }
 
     fn move_to_next_line(&mut self) {
@@ -89,7 +104,13 @@ impl Table {
     }
 
     fn render_row(&mut self, row: Vec<Cell>) {
-        let row = format!("|{}|", self.join_cells(row.clone()));
+        let config = self.config.as_ref().cloned().unwrap_or_default();
+        let row = format!(
+            "{}{}{}",
+            config.v_line_char,
+            self.join_cells(row.clone()),
+            config.v_line_char
+        );
         self.commands.push(move || terminal_print!(row.clone()));
     }
 
@@ -138,5 +159,22 @@ impl Table {
         }
 
         cells_w
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct TableConfig {
+    pub corners_char: &'static str,
+    pub h_line_char: &'static str,
+    pub v_line_char: &'static str,
+}
+
+impl Default for TableConfig {
+    fn default() -> Self {
+        Self {
+            corners_char: "+",
+            h_line_char: "-",
+            v_line_char: "|",
+        }
     }
 }

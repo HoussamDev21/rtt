@@ -1,10 +1,16 @@
 mod rtt;
 use rtt::{Cell, Style, Table};
 
-use crate::rtt::HAlign;
+use crate::rtt::{HAlign, TableConfig};
 
 pub fn main() {
     let mut table = Table::new();
+
+    table.set_config(TableConfig {
+        corners_char: ".",
+        h_line_char: "=",
+        v_line_char: "|",
+    });
 
     let mut cell = Cell::default();
     cell.style(Style {
