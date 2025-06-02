@@ -1,4 +1,4 @@
-use crate::rtt::{Cell, CommandsHolder};
+use crate::rtt::{Cell, CommandsHolder, HAlign};
 use crate::{terminal_clear, terminal_move_to, terminal_print};
 
 #[derive(Debug)]
@@ -40,25 +40,44 @@ impl Table {
             .push(move || terminal_print!(format!("+{}+", line.join("+"))));
     }
 
-    fn formt_cell(&self, (index, cell): (usize, &Cell)) -> String {
+    fn format_cell(&self, (index, cell): (usize, &Cell)) -> String {
         let cells_w = &self.cells_w();
-        let (_, pe, _, ps) = cell.style.clone().unwrap_or_default().p.unwrap_or_default();
-        format!(
-            "{:>ps$}{:>width$}{:>pe$}",
-            "",
-            cell.value.clone().unwrap_or_default(),
-            "",
-            width = (cells_w[index] - ps - pe) as usize,
-            ps = ps as usize,
-            pe = pe as usize
-        )
+        let style = cell.style.clone().unwrap_or_default();
+        let (_, pe, _, ps) = style.p.unwrap_or_default();
+
+        let h_align = style.h_align.unwrap_or_default();
+        let cell_value = cell.value.clone().unwrap_or_default();
+
+        let ps = ps as usize;
+        let pe = pe as usize;
+        let width = (cells_w[index] - ps as u16 - pe as u16) as usize;
+
+        let (pre, val, post) = match h_align {
+            HAlign::Start => (
+                format!("{:<ps$}", "", ps = ps),
+                format!("{:<width$}", cell_value, width = width),
+                format!("{:<pe$}", "", pe = pe),
+            ),
+            HAlign::Center => (
+                format!("{:^ps$}", "", ps = ps),
+                format!("{:^width$}", cell_value, width = width),
+                format!("{:^pe$}", "", pe = pe),
+            ),
+            HAlign::End => (
+                format!("{:>ps$}", "", ps = ps),
+                format!("{:>width$}", cell_value, width = width),
+                format!("{:>pe$}", "", pe = pe),
+            ),
+        };
+
+        format!("{pre}{val}{post}")
     }
 
     fn join_cells(&self, values: Vec<Cell>) -> String {
         values
             .iter()
             .enumerate()
-            .map(|it| self.formt_cell(it))
+            .map(|it| self.format_cell(it))
             .collect::<Vec<String>>()
             .join("|")
     }

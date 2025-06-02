@@ -1,4 +1,4 @@
-use crate::rtt::Style;
+use crate::rtt::{HAlign, Style};
 
 #[derive(Clone, Debug, Default)]
 pub struct Cell {
@@ -39,6 +39,14 @@ impl Cell {
     #[allow(dead_code)]
     pub fn size(&mut self, w: u16, h: u16) -> Self {
         self.width(w).height(h);
+
+        self.clone()
+    }
+
+    pub fn h_align(&mut self, h_align: HAlign) -> Self {
+        let mut style = self.style.clone().unwrap_or_default();
+        style.h_align = Some(h_align);
+        self.style = Some(style);
 
         self.clone()
     }
