@@ -1,7 +1,7 @@
 mod rtt;
 use rtt::{Cell, Style, Table};
 
-use crate::rtt::{HAlign, TableConfig};
+use crate::rtt::{HAlign, TableConfig, VAlign};
 
 pub fn main() {
     let mut table = Table::new();
@@ -17,6 +17,7 @@ pub fn main() {
         w: Some(0),
         p: Some((0, 1, 0, 1)),
         h_align: Some(HAlign::Start),
+        v_align: Some(VAlign::Start),
         ..Style::default()
     });
 

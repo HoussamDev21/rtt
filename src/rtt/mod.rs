@@ -10,5 +10,6 @@ pub use cell::Cell;
 use commands_holder::CommandsHolder;
 pub use style::HAlign;
 pub use style::Style;
+pub use style::VAlign;
 pub use table::Table;
 pub use table::TableConfig;
