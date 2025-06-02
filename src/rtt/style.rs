@@ -1,6 +1,6 @@
-#[derive(Clone, Debug)]
+#[allow(dead_code)]
+#[derive(Clone, Debug, Default)]
 pub struct Style {
-    w: Option<u16>,
-    h: Option<u16>,
-    p: Option<(u16, u16, u16, u16)>,
+    pub w: Option<u16>,
+    pub h: Option<u16>,
 }

@@ -1,31 +1,38 @@
 mod rtt;
-use rtt::{Cell, Table};
+use rtt::{Cell, Style, Table};
 
 pub fn main() {
     let mut table = Table::new();
+
+    let mut cell = Cell::default();
+    cell.style(Style {
+        // w: Some(20),
+        ..Default::default()
+    });
+
     table.row(vec![
-        Cell::new("row 1 col 1"),
-        Cell::new("row 1 col 2"),
-        Cell::new("row 1 col 3"),
-        Cell::new("row 1 col 4"),
+        cell.value("name").width(30),
+        cell.value("color").width(15),
+        cell.value("price").width(15),
+        cell.value("quantity").width(15),
     ]);
     table.row(vec![
-        Cell::new("row 2 col 1"),
-        Cell::new("row 2 col 2"),
-        Cell::new("row 2 col 3"),
-        Cell::new("row 2 col 4"),
+        cell.value("car toy"),
+        cell.value("red"),
+        cell.value("$12"),
+        cell.value("100"),
     ]);
     table.row(vec![
-        Cell::new("row 3 col 1"),
-        Cell::new("row 3 col 2"),
-        Cell::new("row 3 col 3"),
-        Cell::new("row 3 col 4"),
+        cell.value("xbox controller"),
+        cell.value("white"),
+        cell.value("$70"),
+        cell.value("50"),
     ]);
     table.row(vec![
-        Cell::new("row 4 col 1"),
-        Cell::new("row 4 col 2"),
-        Cell::new("row 4 col 3"),
-        Cell::new("row 4 col 4"),
+        cell.value("fancy keyboard"),
+        cell.value("black"),
+        cell.value("$49.99"),
+        cell.value("33"),
     ]);
 
     table.render();
